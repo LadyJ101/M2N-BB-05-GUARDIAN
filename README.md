@@ -18,8 +18,7 @@
 
 ## 🏗️ Project Architecture & Workflow
 
-The entire design, implementation, verification, and documentation pipeline is mapped below. Save the architectural diagram image to `docs/Architectural_Diagram.jpeg` in this repository to view it inline.
-
+The entire design, implementation, verification, and documentation pipeline is mapped below.
 ![GUARDIAN Architecture & Workflow Guide](Architectural_Diagram.jpeg)
 
 ### Workflow Stage Breakdown
