@@ -20,7 +20,7 @@
 
 The entire design, implementation, verification, and documentation pipeline is mapped below. Save the architectural diagram image to `docs/Architectural_Diagram.jpeg` in this repository to view it inline.
 
-![GUARDIAN Architecture & Workflow Guide](architecture_workflow.png)
+![GUARDIAN Architecture & Workflow Guide](Architectural_Diagram.jpeg)
 
 ### Workflow Stage Breakdown
 
