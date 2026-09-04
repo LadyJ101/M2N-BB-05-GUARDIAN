@@ -19,7 +19,7 @@
 ## 🏗️ Project Architecture & Workflow
 
 The entire design, implementation, verification, and documentation pipeline is mapped below.
-![GUARDIAN Architecture & Workflow Guide](Architectural_Diagram.jpeg)
+![GUARDIAN Architecture & Workflow Guide](Architectural_Diagram.jpg)
 
 ### Workflow Stage Breakdown
 
