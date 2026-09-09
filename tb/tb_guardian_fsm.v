@@ -5,7 +5,7 @@ module tb_guardian_fsm;
   reg rst;
   reg fault_in;
   reg activate_in;
-  reg stop;
+  reg stop_in;
 
   wire [1:0] state;
 
@@ -15,8 +15,8 @@ module tb_guardian_fsm;
     .rst(rst),
     .fault_in(fault_in),
     .activate_in(activate_in),
-    .state(state)
-//    .stop(stop)
+    .state(state),
+    .stop_in(stop_in)
   );
 
     // Testbench logic can be added here to drive inputs and monitor outputs
@@ -27,7 +27,12 @@ module tb_guardian_fsm;
       $dumpvars(0, tb_guardian_fsm);
 
       // Initialize inputs
-      #10 clk = 0;
+      clk         = 0;
+      fault_in    = 0;
+      activate_in = 0;
+      stop_in     = 0;
+
+      rst         = 1;
       #10 $display("State after clk asserted: %b", state);
 
       #10 rst = 1; // move to RESET
@@ -43,15 +48,16 @@ module tb_guardian_fsm;
       #10 activate_in = 1;
       #10 $display("State after activate_in = 1 asserted: %b", state); // Move to ACTIVE
 
+      #10 stop_in = 1;
+      #10 $display("State after stop_in = 1 asserted: %b", state); // Move to IDLE
+      
       // Apply test stimuli
       #10 fault_in = 1;
       #10 $display("State after fault_in = 1  asserted: %b", state);
      
-      #10 fault_in = 0;
-      #10 $display("State after fault_in = 0 asserted: %b", state);
+      #10 rst = 1; 
+      #10 $display("State after rst = 1 asserted: %b", state); // Move to RESET
 
-//      #10 stop = 1;
-//      #10 #display("State after stop = 1 asserted: %b", state)
 
       #10 $display("Final state: %b", state);
       // End simulation
