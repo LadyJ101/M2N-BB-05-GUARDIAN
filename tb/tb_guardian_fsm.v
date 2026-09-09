@@ -5,6 +5,7 @@ module tb_guardian_fsm;
   reg rst;
   reg fault_in;
   reg activate_in;
+  reg stop;
 
   wire [1:0] state;
 
@@ -14,7 +15,8 @@ module tb_guardian_fsm;
     .rst(rst),
     .fault_in(fault_in),
     .activate_in(activate_in),
-    .state(state)
+    .state(state),
+    .stop(stop)
   );
 
     // Testbench logic can be added here to drive inputs and monitor outputs
@@ -28,7 +30,7 @@ module tb_guardian_fsm;
       #10 rst = 1; // move to RESET
       #10 $display("State after rst = 1 asserted: %b", state);
 
-      // Apply reset
+       // Apply reset
       #10 rst = 0; 
       #10 $display("State after rst = 0 asserted: %b", state); // Move to IDLE
 
@@ -45,12 +47,15 @@ module tb_guardian_fsm;
       #10 fault_in = 0;
       #10 $display("State after fault_in = 0 asserted: %b", state);
 
+      #10 stop = 1;
+      #10 #display("State after stop = 1 asserted: %b", state)
+
       #10 $display("Final state: %b", state);
       // End simulation
       #10 $finish;
     end
 
     // Clock generation
-    always #5 clk = ~clk;
+     always #5 clk = ~clk;
     
 endmodule
