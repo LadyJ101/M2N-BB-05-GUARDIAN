@@ -23,9 +23,25 @@
 //                  blueprint's Core Functional Objectives
 //                  (Section 1). Asserting it while in IDLE moves
 //                  GUARDIAN into ACTIVE. Once in ACTIVE, GUARDIAN
-//                  stays there regardless of activate_in's value
-//                  afterward — only fault_in can move it out
-//                  (to PROTECTION_LATCH).
+//                  stays there until either fault_in forces it to
+//                  PROTECTION_LATCH, or stop_in returns it to
+//                  IDLE (see stop_in below).
+//                  TODO: confirm actual signal name, source
+//                  block, and exact semantics with team — this
+//                  is currently a design placeholder, not a
+//                  confirmed interface signal.
+//
+//   stop_in      - One-shot trigger placeholder for a deliberate,
+//                  non-fault stop request. Asserting it while in
+//                  ACTIVE returns GUARDIAN to IDLE. Only has an
+//                  effect in ACTIVE — ignored in every other
+//                  state. Distinct from fault_in: represents an
+//                  intentional, planned stop (e.g. maintenance),
+//                  not a detected fault, so it does NOT route
+//                  through PROTECTION_LATCH. If fault_in and
+//                  stop_in are both asserted in the same cycle,
+//                  fault_in wins — it's checked first in the RTL,
+//                  before stop_in is ever evaluated.
 //                  TODO: confirm actual signal name, source
 //                  block, and exact semantics with team — this
 //                  is currently a design placeholder, not a
@@ -37,6 +53,7 @@ module guardian_fsm (    // Remember to confirm every name used with the team an
     input wire rst,
     input wire fault_in, // confirm actual fault signal name and width with the team
     input wire activate_in,
+    input wire stop_in,   // A delibrate stop signal when in active state
     output reg [1:0] state
 );
     // state encoding
@@ -64,7 +81,7 @@ module guardian_fsm (    // Remember to confirm every name used with the team an
             case (state)
                 RESET: next_state = IDLE;
                 IDLE: next_state = (activate_in) ? ACTIVE : IDLE; // transition to ACTIVE if activate signal is high
-                ACTIVE: next_state = ACTIVE; // system is active, only a fault can move it out of this state
+                ACTIVE: next_state =  (stop_in) ? IDLE : ACTIVE; // system is active, only a fault can move it out of this state and also a stop signal
                 PROTECTION_LATCH: next_state = PROTECTION_LATCH; // stay in protection latch
                 default: next_state = RESET; // default case to handle unexpected states
             endcase
