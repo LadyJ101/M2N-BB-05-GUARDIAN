@@ -103,3 +103,39 @@ GUARDIAN is a synchronous digital block.
 - `fault` has priority over `start` and `stop`.
 - `reset` is the only legal method of leaving the PROTECTION state.
 - Outputs reflect the current FSM state immediately after the state register updates.
+
+
+## Inter-Block Connectivity
+
+| Signal | Connected Block | Relationship |
+|---|---|---|
+| clk | PULSE (M2N-BB-03) | GUARDIAN receives system clock from PULSE |
+| fault | SENTINEL | GUARDIAN receives emergency fault signal from SENTINEL |
+| state_out | VOICE | VOICE monitors GUARDIAN's current FSM state |
+| reset | External / Manual | Manual reset clears the protection latch |
+| start, stop | External Control | Requests state transitions between IDLE and ACTIVE |
+
+## Fault Priority
+
+`fault` has the highest priority of any input signal.
+
+
+
+If `fault` returns to 0, GUARDIAN **remains in PROTECTION**. A `reset` is required to leave PROTECTION — this is the only legal recovery path.
+
+## Interface Rules
+
+- Inputs are sampled only on the rising edge of `clk`.
+- `fault` overrides `start` and `stop` if asserted on the same clock edge.
+- `reset` is the sole mechanism for clearing the PROTECTION latch.
+- Outputs (`motor`, `alarm`, `state_out`) update immediately after the state register captures the new state.
+- Signal names, widths, and directions defined in this document are frozen and must be used identically across RTL, Verification, and Documentation.
+
+## Revision History
+
+| Version | Status | Description |
+|---|---|---|
+| v0.1 | Draft | Initial interface definition |
+| v0.2 | Reviewed | Pinout and timing information added |
+| v0.3 | Reviewed | Inter-block connectivity added |
+| v1.0 | RELEASED | Final interface specification |
