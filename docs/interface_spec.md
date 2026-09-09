@@ -67,3 +67,39 @@ This allows the VOICE block to read the FSM state directly.
 - `clk` is supplied by the PULSE timing block.
 - `fault` is supplied by the SENTINEL comparator block.
 - `state_out` is intended for monitoring by the VOICE digital I/O block.
+
+
+## Clocking Rule
+
+GUARDIAN is a synchronous digital block.
+
+- All state transitions occur on the rising edge of `clk`.
+- Inputs (`start`, `stop`, `fault`, and `reset`) must be stable before the rising edge.
+- Outputs update after the state register captures the new state.
+
+## Input Timing Specification
+
+| Signal | Sampled On | Function |
+|---|---|---|
+| start | Rising edge | Requests ACTIVE state |
+| stop | Rising edge | Requests IDLE state |
+| fault | Rising edge | Forces PROTECTION state |
+| reset | Rising edge | Clears protection latch |
+
+**Important:** `fault` has the highest priority. If `fault = 1` and `start = 1` at the same clock edge, GUARDIAN enters PROTECTION.
+
+## Output Timing Behavior
+
+| Current State | Motor | Alarm |
+|---|---|---|
+| RESET | 0 | 0 |
+| IDLE | 0 | 0 |
+| ACTIVE | 1 | 0 |
+| PROTECTION | 0 | 1 |
+
+## Timing Notes
+
+- GUARDIAN samples inputs only on the rising edge of `clk`.
+- `fault` has priority over `start` and `stop`.
+- `reset` is the only legal method of leaving the PROTECTION state.
+- Outputs reflect the current FSM state immediately after the state register updates.
