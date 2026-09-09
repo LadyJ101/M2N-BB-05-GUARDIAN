@@ -15,14 +15,17 @@ module tb_guardian_fsm;
     .rst(rst),
     .fault_in(fault_in),
     .activate_in(activate_in),
-    .state(state),
-    .stop(stop)
+    .state(state)
+//    .stop(stop)
   );
 
     // Testbench logic can be added here to drive inputs and monitor outputs
 
     // Example testbench logic
     initial begin
+      $dumpfile("sim/guardian_fsm.vcd");
+      $dumpvars(0, tb_guardian_fsm);
+
       // Initialize inputs
       #10 clk = 0;
       #10 $display("State after clk asserted: %b", state);
@@ -47,8 +50,8 @@ module tb_guardian_fsm;
       #10 fault_in = 0;
       #10 $display("State after fault_in = 0 asserted: %b", state);
 
-      #10 stop = 1;
-      #10 #display("State after stop = 1 asserted: %b", state)
+//      #10 stop = 1;
+//      #10 #display("State after stop = 1 asserted: %b", state)
 
       #10 $display("Final state: %b", state);
       // End simulation
