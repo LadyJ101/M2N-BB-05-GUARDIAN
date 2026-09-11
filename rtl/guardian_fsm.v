@@ -46,6 +46,15 @@
 //                  block, and exact semantics with team — this
 //                  is currently a design placeholder, not a
 //                  confirmed interface signal.
+//   active_out   - Active-high signal indicating that GUARDIAN is 
+//                  currently in the ACTIVE state. Drops immediately
+//                  when the state changes from ACTIVE to any other
+//                  state, without waiting for the FSM state register.
+//   fault_out    - Active-high signal when the GUARDIAN is in the
+//                  PROTECTION_LATCH state. This intentionally waits 
+//                  for the FSM state register to update, so that
+//                  the signal is only asserted after the FSM has
+//                  actually entered the PROTECTION_LATCH state.
 //==============================================================
 
 module guardian_fsm (    // Remember to confirm every name used with the team and every other team
@@ -54,7 +63,11 @@ module guardian_fsm (    // Remember to confirm every name used with the team an
     input wire fault_in, // confirm actual fault signal name and width with the team
     input wire activate_in,
     input wire stop_in,   // A delibrate stop signal when in active state
-    output reg [1:0] state
+    
+    output reg [1:0] state,
+    
+    output wire active_out,
+    output wire fault_out
 );
     // state encoding
     localparam RESET = 2'b00;
@@ -72,6 +85,7 @@ module guardian_fsm (    // Remember to confirm every name used with the team an
             state <= next_state;
                  
     end
+    // Next state logic: Fault always wins, then check for activate_in and stop_in signals
 
     always @(*) begin
         next_state = state; // default to current state
@@ -87,5 +101,12 @@ module guardian_fsm (    // Remember to confirm every name used with the team an
             endcase
         end
     end
-     
+    // Output logic
+    // Immediate Shutdown
+    // active_out drops as soon as fault_in goes High
+    assign active_out = (state == ACTIVE) && !fault_in;
+    
+    // fault_out is only high when the FSM is in PROTECTION_LATCH state
+    assign fault_out = (state == PROTECTION_LATCH);
+    
 endmodule
